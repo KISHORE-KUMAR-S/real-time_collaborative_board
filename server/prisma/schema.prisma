@@ -1,0 +1,82 @@
+// Prisma schema for the collaborative Kanban board.
+// Database is the single source of truth; clients always reconcile against it.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum CardColumn {
+  todo
+  doing
+  done
+}
+
+// Per-board role. Authorization is scoped to a board, not global, so the role
+// lives on the BoardMember join row.
+enum Role {
+  owner
+  editor
+  viewer
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Char(36)
+  email        String   @unique @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  ownedBoards Board[]       @relation("BoardOwner")
+  memberships BoardMember[]
+
+  @@map("users")
+}
+
+model Board {
+  id        String   @id @default(uuid()) @db.Char(36)
+  ownerId   String   @map("owner_id") @db.Char(36)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  owner   User          @relation("BoardOwner", fields: [ownerId], references: [id])
+  cards   Card[]
+  members BoardMember[]
+
+  @@index([ownerId])
+  @@map("boards")
+}
+
+model BoardMember {
+  boardId   String   @map("board_id") @db.Char(36)
+  userId    String   @map("user_id") @db.Char(36)
+  role      Role
+  createdAt DateTime @default(now()) @map("created_at")
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([boardId, userId])
+  @@index([userId])
+  @@map("board_members")
+}
+
+model Card {
+  id        String     @id @default(uuid()) @db.Char(36)
+  boardId   String     @map("board_id") @db.Char(36)
+  title     String     @db.VarChar(255)
+  column    CardColumn @map("column_name")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  // Cards are always queried by board, often filtered/grouped by column.
+  @@index([boardId])
+  @@index([boardId, column])
+  @@map("cards")
+}

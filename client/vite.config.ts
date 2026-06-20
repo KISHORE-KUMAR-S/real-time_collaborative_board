@@ -11,4 +11,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: "0.0.0.0",
+    proxy: {
+      "/api/v1": "http://localhost:4000",
+      "/socket.io": {
+        target: "http://localhost:4000",
+        ws: true,
+      },
+      "/health": "http://localhost:4000",
+    },
+  },
 })

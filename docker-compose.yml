@@ -1,0 +1,48 @@
+# One command to run the whole stack: mysql + backend + frontend.
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "admin@123"
+      MYSQL_DATABASE: collab_board
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-padmin@123"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./server
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://root:admin%40123@mysql:3306/collab_board"
+      PORT: "4000"
+      CLIENT_ORIGIN: "http://localhost:8081"
+      DEFAULT_BOARD_ID: "11111111-1111-1111-1111-111111111111"
+      JWT_SECRET: "change-me-in-production"
+      JWT_EXPIRES_IN: "7d"
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: "http://localhost:4000"
+        VITE_BOARD_ID: "11111111-1111-1111-1111-111111111111"
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+volumes:
+  mysql_data:
