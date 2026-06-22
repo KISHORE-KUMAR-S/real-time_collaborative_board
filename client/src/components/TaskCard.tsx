@@ -62,7 +62,7 @@ export function TaskCard({
           />
         ) : (
           <p
-            className="text-sm break-words"
+            className="text-sm wrap-break-words"
             onDoubleClick={() => canUpdate && setEditing(true)}
           >
             {card.title}
@@ -70,52 +70,52 @@ export function TaskCard({
         )}
 
         {(canUpdate || canDelete) && (
-        <div className="flex flex-wrap items-center gap-2">
-          {canUpdate && (
-            <>
-              <Select
-                value={card.column}
-                onValueChange={(v) => onMove(card.id, v as Column)}
-              >
-                <SelectTrigger
-                  size="sm"
-                  className="flex-1"
-                  aria-label="Move card"
+          <div className="flex flex-wrap items-center gap-2">
+            {canUpdate && (
+              <>
+                <Select
+                  value={card.column}
+                  onValueChange={(v) => onMove(card.id, v as Column)}
                 >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {COLUMNS.map((c) => (
-                      <SelectItem key={c.key} value={c.key}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                  <SelectTrigger
+                    size="sm"
+                    className="flex-1"
+                    aria-label="Move card"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {COLUMNS.map((c) => (
+                        <SelectItem key={c.key} value={c.key}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
 
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Edit card"
+                  onClick={() => setEditing(true)}
+                >
+                  <PencilIcon data-icon="inline-start" />
+                </Button>
+              </>
+            )}
+            {canDelete && (
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Edit card"
-                onClick={() => setEditing(true)}
+                aria-label="Delete card"
+                onClick={() => onDelete(card.id)}
               >
-                <PencilIcon data-icon="inline-start" />
+                <Trash2Icon data-icon="inline-start" />
               </Button>
-            </>
-          )}
-          {canDelete && (
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Delete card"
-              onClick={() => onDelete(card.id)}
-            >
-              <Trash2Icon data-icon="inline-start" />
-            </Button>
-          )}
-        </div>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>

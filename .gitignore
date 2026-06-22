@@ -5,3 +5,5 @@ dist/
 .DS_Store
 client/dist/
 server/dist/
+INTERVIEW_WALKTHROUGH.md
+WALKTHROUGH.md
