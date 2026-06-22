@@ -1,16 +1,11 @@
 // Holds the authenticated user + token, persisted across refreshes. The token
 // itself lives in authToken (localStorage); this provider mirrors the user for
 // rendering and exposes login/signup/logout.
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import { api } from "@/services/api"
 import { authToken } from "@/services/authToken"
 import type { User } from "@/types"
+import { AuthContext, type AuthContextValue } from "./auth-context"
 
 const USER_KEY = "collab-board-user"
 
@@ -22,21 +17,6 @@ function loadUser(): User | null {
   } catch {
     return null
   }
-}
-
-interface AuthContextValue {
-  user: User | null
-  login: (email: string, password: string) => Promise<void>
-  signup: (email: string, name: string, password: string) => Promise<void>
-  logout: () => void
-}
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined)
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider")
-  return ctx
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

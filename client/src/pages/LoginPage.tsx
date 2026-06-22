@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useAuth } from "@/providers/AuthProvider"
+import { useAuth } from "@/providers/auth-context"
 import { ApiError } from "@/services/api"
 import { Eye, EyeOff } from "lucide-react"
 

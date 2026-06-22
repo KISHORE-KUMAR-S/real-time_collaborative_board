@@ -6,28 +6,12 @@
 // Reconnection: on every (re)connect we rejoin the board room AND invalidate
 // the board query, so we never rely solely on websocket events that may have
 // been missed while disconnected. The DB is the source of truth.
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { socket } from "@/services/socket"
 import { boardKey } from "@/hooks/useBoard"
 import { type Board, type BoardCard, SOCKET_EVENTS } from "@/types"
-
-interface SocketContextValue {
-  connected: boolean
-}
-
-const SocketContext = createContext<SocketContextValue>({ connected: false })
-
-export function useSocketStatus() {
-  return useContext(SocketContext)
-}
+import { SocketContext } from "./socket-context"
 
 export function SocketProvider({
   boardId,

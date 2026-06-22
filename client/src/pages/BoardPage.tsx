@@ -8,8 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useBoard } from "@/hooks/useBoard"
 import { useCardMutations } from "@/hooks/useCardMutations"
-import { useSocketStatus } from "@/providers/SocketProvider"
-import { useAuth } from "@/providers/AuthProvider"
+import { useSocketStatus } from "@/providers/socket-context"
+import { useAuth } from "@/providers/auth-context"
 import { ApiError } from "@/services/api"
 import {
   COLUMNS,

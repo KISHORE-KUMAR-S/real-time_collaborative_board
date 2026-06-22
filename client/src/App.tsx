@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/sonner"
-import { AuthProvider, useAuth } from "@/providers/AuthProvider"
+import { AuthProvider } from "@/providers/AuthProvider"
+import { useAuth } from "@/providers/auth-context"
 import { SocketProvider } from "@/providers/SocketProvider"
 import { BoardPage } from "@/pages/BoardPage"
 import { LoginPage } from "@/pages/LoginPage"
